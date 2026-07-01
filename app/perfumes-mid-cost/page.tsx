@@ -1,3 +1,5 @@
+export const revalidate = 3600; // Caché de 1 hora — se actualiza automáticamente
+
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Header from "@/components/Header";

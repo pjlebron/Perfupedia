@@ -1,3 +1,5 @@
+export const revalidate = 3600; // Caché de 1 hora — se actualiza automáticamente
+
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Header from "@/components/Header";

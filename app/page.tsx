@@ -1,3 +1,5 @@
+export const revalidate = 3600; // Caché de 1 hora — se actualiza automáticamente
+
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
