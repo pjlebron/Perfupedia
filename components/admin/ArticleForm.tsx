@@ -2,7 +2,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { articleSchema, type ArticleFormValues } from "@/schemas/article.schema";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+function getSupabaseBrowser() { return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!); }
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -29,10 +30,7 @@ export default function ArticleForm({ defaultValues, articleId, categories }: Ar
   const [error, setError] = useState("");
   const isEdit = !!articleId;
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = getSupabaseBrowser();
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),

@@ -2,7 +2,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { perfumeSchema, type PerfumeFormValues } from "@/schemas/perfume.schema";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+function getSupabaseBrowser() { return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!); }
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -36,10 +37,7 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
   const [error, setError] = useState("");
   const isEdit = !!perfumeId;
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = getSupabaseBrowser();
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<PerfumeFormValues>({
     resolver: zodResolver(perfumeSchema),

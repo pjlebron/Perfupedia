@@ -2,7 +2,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { brandSchema, type BrandFormValues } from "@/schemas/brand.schema";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+function getSupabaseBrowser() { return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!); }
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -35,10 +36,7 @@ export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
   const [error, setError] = useState("");
   const isEdit = !!brandId;
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = getSupabaseBrowser();
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),

@@ -1,13 +1,20 @@
 "use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, AlertCircle } from "lucide-react";
+
+function getClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -18,15 +25,11 @@ export default function LoginForm() {
   const params = useSearchParams();
   const noPermission = params.get("error") === "no-permission";
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    const supabase = getClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError("Email o contraseña incorrectos.");
@@ -47,9 +50,7 @@ export default function LoginForm() {
           </span>
         </div>
         <Card>
-          <CardHeader>
-            <CardTitle>Acceso al panel</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>Acceso al panel</CardTitle></CardHeader>
           <CardContent>
             {noPermission && (
               <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
