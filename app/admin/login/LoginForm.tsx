@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, AlertCircle } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+// Cliente creado inline para evitar cualquier problema de importación
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -22,12 +26,22 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError("Email o contraseña incorrectos.");
+
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      setError("Error de configuración: variables de entorno no cargadas. URL: " + (SUPABASE_URL || "vacía"));
       setLoading(false);
       return;
     }
+
+    const client = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { error: authError } = await client.auth.signInWithPassword({ email, password });
+
+    if (authError) {
+      setError("Error: " + authError.message);
+      setLoading(false);
+      return;
+    }
+
     router.push("/admin");
     router.refresh();
   };
@@ -71,6 +85,11 @@ export default function LoginForm() {
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Ingresando...</> : "Ingresar"}
               </Button>
             </form>
+
+            {/* Debug info — lo sacamos después */}
+            <p className="text-[10px] text-gray-300 mt-4 text-center">
+              URL: {SUPABASE_URL ? "✓" : "✗"} · KEY: {SUPABASE_KEY ? "✓" : "✗"}
+            </p>
           </CardContent>
         </Card>
       </div>
