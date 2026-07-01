@@ -14,6 +14,7 @@ import SlugInput from "@/components/admin/SlugInput";
 import StatusSelect from "@/components/admin/StatusSelect";
 import SeoFields from "@/components/admin/SeoFields";
 import ScoreSlider from "@/components/admin/ScoreSlider";
+import CheckboxGroup from "@/components/admin/CheckboxGroup";
 import { Loader2, Save } from "lucide-react";
 
 type Brand = { id: string; name: string };
@@ -256,20 +257,27 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
 
       {/* 5. RECOMENDACIONES */}
       <FormSection title="5 · Recomendaciones de uso">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1.5">
-            <Label>Estación recomendada</Label>
-            <Input {...register("recommended_season")} placeholder="ej: otoño, invierno" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label>Momento del día</Label>
-            <Input {...register("recommended_time_of_day")} placeholder="ej: noche" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label>Ocasión de uso</Label>
-          <Input {...register("recommended_occasion")} placeholder="ej: noche, salidas, eventos" />
-        </div>
+        <CheckboxGroup
+          label="Estación recomendada"
+          options={["Primavera", "Verano", "Otoño", "Invierno"]}
+          value={watch("recommended_season") ?? ""}
+          onChange={(v) => setValue("recommended_season", v)}
+          columns={4}
+        />
+        <CheckboxGroup
+          label="Momento del día"
+          options={["Mañana", "Tarde", "Noche", "Cualquier momento"]}
+          value={watch("recommended_time_of_day") ?? ""}
+          onChange={(v) => setValue("recommended_time_of_day", v)}
+          columns={4}
+        />
+        <CheckboxGroup
+          label="Ocasión de uso"
+          options={["Uso diario", "Trabajo / Oficina", "Casual", "Citas", "Salidas / Noche", "Formal / Eventos", "Deportivo", "Regalo"]}
+          value={watch("recommended_occasion") ?? ""}
+          onChange={(v) => setValue("recommended_occasion", v)}
+          columns={2}
+        />
         <div className="flex flex-col gap-1.5">
           <Label>Perfil de usuario recomendado</Label>
           <Input {...register("recommended_user_style")} placeholder="ej: Hombres que buscan presencia y duración" />
