@@ -1,9 +1,6 @@
-// Usamos el mismo createClient simple que usa el resto del sitio — sin @supabase/ssr
-import { createClient } from "@supabase/supabase-js";
-
+// Reutilizamos el mismo cliente del sitio público — ya tiene las vars configuradas
+// y funciona en producción
+import { supabase } from "@/lib/supabase";
 export function getSupabaseBrowser() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  return supabase;
 }

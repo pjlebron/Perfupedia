@@ -1,20 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, AlertCircle } from "lucide-react";
-
-function getClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
+import { supabase } from "@/lib/supabase";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -29,7 +22,6 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const supabase = getClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError("Email o contraseña incorrectos.");
@@ -67,11 +59,13 @@ export default function LoginForm() {
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+                <Input id="email" type="email" placeholder="tu@email.com"
+                  value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Input id="password" type="password" placeholder="••••••••"
+                  value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               <Button type="submit" variant="primary" disabled={loading} className="mt-2">
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Ingresando...</> : "Ingresar"}

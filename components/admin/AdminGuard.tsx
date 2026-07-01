@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
@@ -10,13 +10,13 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     const check = async () => {
-      const sb = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-      const { data: { user } } = await sb.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.replace("/admin/login"); return; }
-      const { data: role } = await sb.from("user_roles").select("role").eq("user_id", user.id).single();
+      const { data: role } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
       if (role?.role !== "admin") { router.replace("/admin/login?error=no-permission"); return; }
       setOk(true);
     };
