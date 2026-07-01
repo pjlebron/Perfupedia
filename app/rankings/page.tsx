@@ -23,12 +23,14 @@ async function getRankings() {
 }
 
 const RANKING_EXAMPLES = [
-  { emoji: "🌙", label: "Mejores perfumes árabes para hombre" },
-  { emoji: "🌸", label: "Mejores perfumes árabes para mujer" },
+  { emoji: "🌙", label: "Mejores perfumes árabes en Argentina" },
   { emoji: "🇦🇷", label: "Mejores perfumes nacionales" },
   { emoji: "💰", label: "Perfumes low cost con mejor duración" },
+  { emoji: "✨", label: "Perfumes mid cost mejor relación precio/calidad" },
   { emoji: "☀️", label: "Mejores perfumes para verano" },
   { emoji: "❄️", label: "Mejores perfumes para invierno" },
+  { emoji: "💼", label: "Mejores perfumes para oficina" },
+  { emoji: "🌹", label: "Mejores perfumes para regalo" },
 ];
 
 export default async function RankingsPage() {
