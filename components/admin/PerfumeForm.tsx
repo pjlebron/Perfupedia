@@ -279,7 +279,7 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
           columns={2}
         />
         <div className="flex flex-col gap-1.5">
-          <Label>Perfil de usuario recomendado</Label>
+          <Label>Perfil de usuario recomendado <span className="text-gray-400 font-normal">(opcional)</span></Label>
           <Input {...register("recommended_user_style")} placeholder="ej: Hombres que buscan presencia y duración" />
         </div>
       </FormSection>
