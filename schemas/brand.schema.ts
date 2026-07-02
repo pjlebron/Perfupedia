@@ -11,6 +11,7 @@ export const brandSchema = z.object({
   status: z.enum(["draft", "published", "archived"]),
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
+  main_image_path: z.string().optional().nullable(),
 });
 
 export type BrandFormValues = z.infer<typeof brandSchema>;

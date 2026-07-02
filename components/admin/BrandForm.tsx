@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import FormSection from "@/components/admin/FormSection";
 import SlugInput from "@/components/admin/SlugInput";
 import StatusSelect from "@/components/admin/StatusSelect";
+import ImageUploader from "@/components/admin/ImageUploader";
 import SeoFields from "@/components/admin/SeoFields";
 import { Loader2, Save } from "lucide-react";
 
@@ -32,6 +33,7 @@ interface BrandFormProps {
 export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [localImage, setLocalImage] = useState<string|null>((defaultValues as Record<string,string>)?.main_image_path ?? null);
   const [error, setError] = useState("");
   const isEdit = !!brandId;
 
@@ -118,6 +120,17 @@ export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
             <Input {...register("general_style")} placeholder="ej: Oriental, dulce, intenso" />
           </div>
         </div>
+      </FormSection>
+
+      {/* IMAGEN */}
+      <FormSection title="Imagen de la marca" description="Logo o imagen representativa de la marca.">
+        <ImageUploader
+          label="Logo / Imagen"
+          bucket="marcas"
+          value={localImage}
+          onChange={(path) => { setLocalImage(path); setValue("main_image_path" as never, path as never); }}
+          hint="(recomendado: fondo blanco, cuadrada)"
+        />
       </FormSection>
 
       {/* SEO */}

@@ -15,6 +15,7 @@ import StatusSelect from "@/components/admin/StatusSelect";
 import SeoFields from "@/components/admin/SeoFields";
 import ScoreSlider from "@/components/admin/ScoreSlider";
 import CheckboxGroup from "@/components/admin/CheckboxGroup";
+import ImageUploader from "@/components/admin/ImageUploader";
 import { Loader2, Save } from "lucide-react";
 
 type Brand = { id: string; name: string };
@@ -54,7 +55,8 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
     },
   });
 
-  const nameVal     = watch("name") ?? "";
+  const nameVal       = watch("name") ?? "";
+  const imageVal      = watch("main_image_path");
   const slugVal     = watch("slug") ?? "";
   const brandVal    = watch("brand_id") ?? "";
   const statusVal   = watch("status") ?? "draft";
@@ -300,8 +302,19 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
         </div>
       </FormSection>
 
-      {/* 7. SEO */}
-      <FormSection title="7 · SEO" description="Opcional. Si lo dejás vacío se genera automáticamente.">
+      {/* 7. IMAGEN */}
+      <FormSection title="7 · Imagen del frasco" description="Foto del perfume que se muestra en la ficha y en los listados.">
+        <ImageUploader
+          label="Imagen principal"
+          bucket="perfumes"
+          value={imageVal}
+          onChange={(path) => setValue("main_image_path", path)}
+          hint="(recomendado: fondo blanco, cuadrada)"
+        />
+      </FormSection>
+
+      {/* 8. SEO */}
+      <FormSection title="8 · SEO" description="Opcional. Si lo dejás vacío se genera automáticamente.">
         <SeoFields
           metaTitle={metaTitle}
           metaDescription={metaDesc}
@@ -311,7 +324,7 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
       </FormSection>
 
       {/* 8. ESTADO */}
-      <FormSection title="8 · Estado de publicación">
+      <FormSection title="9 · Estado de publicación">
         <StatusSelect value={statusVal} onChange={(v) => setValue("status", v as "draft" | "published" | "archived")} />
       </FormSection>
     </form>
