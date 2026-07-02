@@ -125,13 +125,13 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           ]} />
 
           {/* HERO */}
-          <div className="mt-8 grid sm:grid-cols-[260px_1fr] gap-8 sm:gap-10 items-start">
+          <div className="mt-8 grid sm:grid-cols-[320px_1fr] gap-8 sm:gap-12 items-start">
             {/* Columna imagen */}
             <div className="sm:sticky sm:top-24">
-              <div className="relative aspect-[3/4] rounded-2xl border border-[var(--color-line)] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center">
+              <div className="relative aspect-square rounded-2xl border border-[var(--color-line)] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center">
                 {mainImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <Image src={mainImage.storage_path} alt={mainImage.alt_text || perfume.name} fill className="object-cover" />
+                  <Image src={mainImage.storage_path} alt={mainImage.alt_text || perfume.name} fill className="object-contain p-4" />
                 ) : (
                   <span className="text-xs text-[var(--color-ink)]/30">Imagen pendiente</span>
                 )}
@@ -203,24 +203,63 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           ) : (perfume as Record<string,string>).recommended_season ? (
             <section className="mt-10">
               <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Estaciones recomendadas</h2>
-              <div className="flex flex-wrap gap-2">
-                {((perfume as Record<string,string>).recommended_season ?? "").split(",").filter(Boolean).map((s: string) => (
-                  <span key={s} className="border border-[var(--color-line)] rounded-full px-3 py-1 text-sm capitalize text-[var(--color-ink)]/70">{s.trim()}</span>
-                ))}
+              <div className="grid grid-cols-4 gap-3">
+                {(["Primavera","Verano","Otoño","Invierno"]).map((s) => {
+                  const icons: Record<string,string> = { "Primavera":"🌸", "Verano":"☀️", "Otoño":"🍂", "Invierno":"❄️" };
+                  const seasonList = ((perfume as Record<string,string>).recommended_season ?? "").toLowerCase();
+                  const active = seasonList.includes(s.toLowerCase()) || seasonList.includes(s === "Otoño" ? "otono" : s.toLowerCase());
+                  return (
+                    <div key={s} className={`rounded-xl p-3 text-center border transition-all ${active ? "border-[var(--color-amber)] bg-[var(--color-amber)]/8" : "border-[var(--color-line)] opacity-30"}`}>
+                      <div className="text-2xl mb-1">{icons[s]}</div>
+                      <div className="text-xs font-medium">{s}</div>
+                    </div>
+                  );
+                })}
               </div>
             </section>
           ) : null}
 
           {/* OCASIONES */}
+          {/* MOMENTO DEL DÍA */}
+          {(perfume as Record<string,string>).recommended_time_of_day ? (
+            <section className="mt-8">
+              <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Momento del día</h2>
+              <div className="grid grid-cols-4 gap-3">
+                {(["Mañana","Tarde","Noche","Cualquier momento"]).map((m) => {
+                  const icons: Record<string,string> = { "Mañana":"🌅", "Tarde":"🌤️", "Noche":"🌙", "Cualquier momento":"✨" };
+                  const timeList = ((perfume as Record<string,string>).recommended_time_of_day ?? "").toLowerCase();
+                  const active = timeList.includes(m.toLowerCase()) || (m === "Cualquier momento" && timeList.includes("cualquier"));
+                  return (
+                    <div key={m} className={`rounded-xl p-3 text-center border transition-all ${active ? "border-[var(--color-amber)] bg-[var(--color-amber)]/8" : "border-[var(--color-line)] opacity-30"}`}>
+                      <div className="text-2xl mb-1">{icons[m]}</div>
+                      <div className="text-xs font-medium leading-tight">{m}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
+
           {occasionAttrs.length > 0 ? (
             <PerfumeOccasionBars attributes={occasionAttrs} />
           ) : (perfume as Record<string,string>).recommended_occasion ? (
             <section className="mt-10">
               <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Ocasiones de uso</h2>
               <div className="flex flex-wrap gap-2">
-                {((perfume as Record<string,string>).recommended_occasion ?? "").split(",").filter(Boolean).map((s: string) => (
-                  <span key={s} className="border border-[var(--color-line)] rounded-full px-3 py-1 text-sm capitalize text-[var(--color-ink)]/70">{s.trim()}</span>
-                ))}
+                {((perfume as Record<string,string>).recommended_occasion ?? "").split(",").filter(Boolean).map((s: string) => {
+                  const icons: Record<string,string> = {
+                    "uso diario":"🌿", "trabajo / oficina":"💼", "casual":"👟",
+                    "citas":"🌹", "salidas / noche":"🌙", "formal / eventos":"🎩",
+                    "deportivo":"⚡", "regalo":"🎁",
+                  };
+                  const key = s.trim().toLowerCase();
+                  const icon = Object.entries(icons).find(([k]) => key.includes(k.split("/")[0].trim()))?.[1] ?? "✨";
+                  return (
+                    <span key={s} className="flex items-center gap-1.5 border border-[var(--color-arabe-green)]/30 bg-[var(--color-arabe-green)]/5 rounded-full px-3 py-1.5 text-sm text-[var(--color-ink)]/80">
+                      {icon} {s.trim()}
+                    </span>
+                  );
+                })}
               </div>
             </section>
           ) : null}
