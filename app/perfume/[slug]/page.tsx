@@ -11,6 +11,7 @@ import BannerSlot from "@/components/BannerSlot";
 import PerfumeAccords from "@/components/PerfumeAccords";
 import PerfumePerformanceBars from "@/components/PerfumePerformanceBars";
 import PerfumeSeasonBars from "@/components/PerfumeSeasonBars";
+import { SeasonDistribution, TimeDistribution } from "@/components/PerfumeVoteDistribution";
 import PerfumeOccasionBars from "@/components/PerfumeOccasionBars";
 import PerfumeNotesPyramid from "@/components/PerfumeNotesPyramid";
 import PerfumeVerdict from "@/components/PerfumeVerdict";
@@ -30,7 +31,7 @@ const ORIGIN_LABEL: Record<string, string> = {
 async function getPerfumeData(slug: string) {
   const { data: perfume } = await supabase
     .from("perfumes")
-    .select(`*, brand:brands(name,slug,type,country), olfactive_family:olfactive_families(name,slug)`)
+    .select(`*, brand:brands(name,slug,type,country), olfactive_family:olfactive_families(name,slug), editorial_scores:perfume_editorial_scores(*)`)
     .eq("slug", slug).eq("status", "published").single();
   if (!perfume) return null;
 
@@ -49,6 +50,14 @@ async function getPerfumeData(slug: string) {
   const totalVotes = voteSummary.data?.total_votes ?? 0;
   const useRealVotes = totalVotes >= VOTE_THRESHOLD;
 
+  // Scores: primero intentamos el join directo, luego la query separada como fallback
+  const editorialScoresData = (perfume as unknown as Record<string, unknown[]>).editorial_scores?.[0] as {
+    duration_score: number | null;
+    projection_score: number | null;
+    sillage_score: number | null;
+    price_quality_score: number | null;
+  } | null ?? editorialScores.data ?? null;
+
   const scores = useRealVotes
     ? {
         duration_score: Math.round((voteSummary.data?.avg_duration ?? 0) * 5) || null,
@@ -56,7 +65,7 @@ async function getPerfumeData(slug: string) {
         sillage_score: Math.round((voteSummary.data?.avg_sillage ?? 0) * 5) || null,
         price_quality_score: Math.round((voteSummary.data?.avg_price_quality ?? 0) * 5) || null,
       }
-    : editorialScores.data ?? null;
+    : editorialScoresData;
 
   return {
     perfume,
