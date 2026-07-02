@@ -31,7 +31,7 @@ const ORIGIN_LABEL: Record<string, string> = {
 async function getPerfumeData(slug: string) {
   const { data: perfume } = await supabase
     .from("perfumes")
-    .select(`*, brand:brands(name,slug,type,country), olfactive_family:olfactive_families(name,slug), editorial_scores:perfume_editorial_scores(*)`)
+    .select(`*, brand:brands(name,slug,type,country), olfactive_family:olfactive_families(name,slug)`)
     .eq("slug", slug).eq("status", "published").single();
   if (!perfume) return null;
 
@@ -40,7 +40,7 @@ async function getPerfumeData(slug: string) {
       supabase.from("perfume_notes").select("position, note:notes(name,slug)").eq("perfume_id", perfume.id),
       supabase.from("perfume_accords").select("accord:accords(name,slug,color_hex)").eq("perfume_id", perfume.id),
       supabase.from("perfume_images").select("display_order, image:image_assets(storage_path,alt_text)").eq("perfume_id", perfume.id).order("display_order").limit(1),
-      supabase.from("perfume_editorial_scores").select("*").eq("perfume_id", perfume.id).single(),
+      supabase.from("perfume_editorial_scores").select("duration_score,projection_score,sillage_score,price_quality_score").eq("perfume_id", perfume.id).limit(1),
       supabase.from("perfume_editorial_attributes").select("attribute,value").eq("perfume_id", perfume.id),
       supabase.from("perfume_vote_summary").select("*").eq("perfume_id", perfume.id).single(),
       supabase.from("perfume_similars").select("note, similar_perfume:perfumes!similar_perfume_id(name,slug,brand:brands(name),olfactive_family:olfactive_families(name))").eq("perfume_id", perfume.id).limit(6),
@@ -50,13 +50,8 @@ async function getPerfumeData(slug: string) {
   const totalVotes = voteSummary.data?.total_votes ?? 0;
   const useRealVotes = totalVotes >= VOTE_THRESHOLD;
 
-  // Scores: primero intentamos el join directo, luego la query separada como fallback
-  const editorialScoresData = (perfume as unknown as Record<string, unknown[]>).editorial_scores?.[0] as {
-    duration_score: number | null;
-    projection_score: number | null;
-    sillage_score: number | null;
-    price_quality_score: number | null;
-  } | null ?? editorialScores.data ?? null;
+  // Scores editoriales — usamos data[0] porque quitamos .single() que fallaba
+  const editorialScoresData = editorialScores.data?.[0] ?? null;
 
   const scores = useRealVotes
     ? {
