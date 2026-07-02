@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { Pencil, Plus, Loader2, ImageOff, ImageIcon } from "lucide-react";
+import { Pencil, Plus, Loader2, ImageOff, ImageIcon, Trash2 } from "lucide-react";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const GENDER: Record<string, string> = { hombre: "Hombre", mujer: "Mujer", unisex: "Unisex" };
@@ -23,14 +23,25 @@ type Perfume = {
 export default function PerfumesPage() {
   const [data, setData] = useState<Perfume[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = () => {
     getSupabaseBrowser()
       .from("perfumes")
       .select("id,name,slug,gender,status,main_image_path,brand:brands(name)")
       .order("name")
       .then(({ data }) => { setData((data as never) ?? []); setLoading(false); });
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleDelete = async (p: Perfume) => {
+    if (!confirm(`¿Seguro que querés borrar "${p.name}"? Esta acción no se puede deshacer.`)) return;
+    setDeleting(p.id);
+    await getSupabaseBrowser().from("perfumes").delete().eq("id", p.id);
+    setDeleting(null);
+    load();
+  };
 
   const conFoto = data.filter((p) => p.main_image_path).length;
   const sinFoto = data.filter((p) => !p.main_image_path).length;
@@ -96,9 +107,21 @@ export default function PerfumesPage() {
                   <td className="px-4 py-3 text-gray-600">{GENDER[r.gender] ?? r.gender}</td>
                   <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
                   <td className="px-4 py-3">
-                    <Link href={`/admin/perfumes/${r.id}/edit`}>
-                      <Button variant="ghost" size="icon"><Pencil className="w-3.5 h-3.5" /></Button>
-                    </Link>
+                    <div className="flex gap-1">
+                      <Link href={`/admin/perfumes/${r.id}/edit`}>
+                        <Button variant="ghost" size="icon"><Pencil className="w-3.5 h-3.5" /></Button>
+                      </Link>
+                      <Button
+                        variant="ghost" size="icon"
+                        onClick={() => handleDelete(r)}
+                        disabled={deleting === r.id}
+                        className="text-red-400 hover:text-red-600 hover:bg-red-50"
+                      >
+                        {deleting === r.id
+                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          : <Trash2 className="w-3.5 h-3.5" />}
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
