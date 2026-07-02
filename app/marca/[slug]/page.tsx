@@ -40,7 +40,7 @@ async function getBrandData(slug: string) {
 
   const { data: perfumes } = await supabase
     .from("perfumes")
-    .select(`name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, brand:brands(name,slug), olfactive_family:olfactive_families(name)`)
+    .select(`name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, main_image_path, brand:brands(name,slug), olfactive_family:olfactive_families(name)`)
     .eq("brand_id", brand.id)
     .eq("status", "published")
     .order("editorial_score", { ascending: false })

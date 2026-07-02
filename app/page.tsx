@@ -12,7 +12,7 @@ async function getHomeData() {
   const [perfumes, articles] = await Promise.all([
     supabase
       .from("perfumes")
-      .select(`name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, brand:brands(name,slug), olfactive_family:olfactive_families(name)`)
+      .select(`name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, main_image_path, brand:brands(name,slug), olfactive_family:olfactive_families(name)`)
       .eq("status", "published")
       .order("created_at", { ascending: false })
       .limit(8),

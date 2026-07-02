@@ -24,7 +24,7 @@ async function getArticle(slug: string) {
   const [relatedPerfumes, faqs] = await Promise.all([
     supabase
       .from("article_perfumes")
-      .select("perfume:perfumes(name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, brand:brands(name,slug), olfactive_family:olfactive_families(name))")
+      .select("perfume:perfumes(name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, main_image_path, brand:brands(name,slug), olfactive_family:olfactive_families(name))")
       .eq("article_id", article.id)
       .limit(6),
     supabase

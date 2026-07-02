@@ -22,7 +22,7 @@ async function getRanking(slug: string) {
 
   const { data: items } = await supabase
     .from("ranking_items")
-    .select(`position, short_comment, perfume:perfumes(name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, brand:brands(name,slug), olfactive_family:olfactive_families(name))`)
+    .select(`position, short_comment, perfume:perfumes(name, slug, origin, gender, concentration, aroma_summary, price_range_ars, editorial_score, main_image_path, brand:brands(name,slug), olfactive_family:olfactive_families(name))`)
     .eq("ranking_id", ranking.id)
     .order("position", { ascending: true });
 

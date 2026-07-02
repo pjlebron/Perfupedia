@@ -1,4 +1,4 @@
-export const revalidate = 3600; // Caché de 1 hora — se actualiza automáticamente
+export const revalidate = 0; // Sin caché — siempre datos frescos
 
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";

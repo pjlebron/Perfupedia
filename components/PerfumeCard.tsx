@@ -1,4 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
+
+const SUPABASE_URL = "https://lbphepwhsyskustxmjue.supabase.co";
 
 type Perfume = {
   name: string;
@@ -11,6 +14,7 @@ type Perfume = {
   editorial_score: number | null;
   brand: { name: string; slug: string } | null;
   olfactive_family: { name: string } | null;
+  main_image_path?: string | null;
   main_image?: { storage_path: string; alt_text: string } | null;
 };
 
@@ -36,24 +40,29 @@ export default function PerfumeCard({
 }) {
   const accentColor = ORIGIN_COLOR[perfume.origin] ?? "var(--color-ink)";
 
+  // Imagen: primero main_image_path (nuevo), luego main_image (viejo)
+  const imageSrc = perfume.main_image_path
+    ? `${SUPABASE_URL}/storage/v1/object/public/perfumes/${perfume.main_image_path}`
+    : perfume.main_image?.storage_path ?? null;
+
   return (
     <Link
       href={`/perfume/${perfume.slug}`}
       className="group flex flex-col border border-[var(--color-line)] rounded-2xl overflow-hidden hover:border-[var(--color-gold)] hover:shadow-sm transition-all duration-200 bg-[var(--color-cream)]"
     >
       {/* Imagen */}
-      <div className="aspect-[4/3] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center relative">
-        {perfume.main_image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={perfume.main_image.storage_path}
-            alt={perfume.main_image.alt_text || perfume.name}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+      <div className="aspect-square bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center relative">
+        {imageSrc ? (
+          <Image
+            src={imageSrc}
+            alt={perfume.name}
+            fill
+            className="object-contain p-3 group-hover:scale-[1.02] transition-transform duration-300"
           />
         ) : (
-          <span className="text-2xl opacity-30">🧴</span>
+          <span className="text-4xl opacity-20">🧴</span>
         )}
-        {/* Badge de origen */}
+        {/* Badge origen */}
         <span
           className="absolute top-3 left-3 text-[10px] uppercase tracking-widest font-semibold px-2 py-1 rounded"
           style={{ background: `${accentColor}18`, color: accentColor }}
@@ -71,10 +80,7 @@ export default function PerfumeCard({
 
       {/* Contenido */}
       <div className="p-4 flex flex-col flex-1">
-        <div
-          className="text-[11px] uppercase tracking-wide font-medium mb-1"
-          style={{ color: accentColor }}
-        >
+        <div className="text-[11px] uppercase tracking-wide font-medium mb-1" style={{ color: accentColor }}>
           {perfume.brand?.name}
         </div>
         <h3 className="font-display text-lg leading-tight mb-1 group-hover:text-[var(--color-amber)] transition-colors">
