@@ -39,12 +39,27 @@ export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
 
   const supabase = getSupabaseBrowser();
 
+  // Limpiar campos de Supabase que no están en el schema (id, created_at, etc.)
+  const cleanDefaults = defaultValues ? {
+    name:              defaultValues.name,
+    slug:              defaultValues.slug,
+    country:           defaultValues.country,
+    type:              defaultValues.type,
+    description:       defaultValues.description,
+    price_range:       defaultValues.price_range,
+    general_style:     defaultValues.general_style,
+    status:            defaultValues.status,
+    meta_title:        defaultValues.meta_title,
+    meta_description:  defaultValues.meta_description,
+    main_image_path:   (defaultValues as Record<string,string>).main_image_path,
+  } : {};
+
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BrandFormValues>({
     resolver: zodResolver(brandSchema),
     defaultValues: {
       status: "draft",
       type: "arabe",
-      ...defaultValues,
+      ...cleanDefaults,
     },
   });
 

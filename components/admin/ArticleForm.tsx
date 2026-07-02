@@ -31,9 +31,14 @@ export default function ArticleForm({ defaultValues, articleId, categories }: Ar
 
   const supabase = getSupabaseBrowser();
 
+  const ARTICLE_FIELDS = ["title","slug","category_id","author","content_json","content","status","published_at","meta_title","meta_description"];
+  const cleanDefaults = defaultValues
+    ? Object.fromEntries(Object.entries(defaultValues).filter(([k]) => ARTICLE_FIELDS.includes(k)))
+    : {};
+
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
-    defaultValues: { status: "draft", ...defaultValues },
+    defaultValues: { status: "draft", ...cleanDefaults },
   });
 
   const titleVal  = watch("title") ?? "";

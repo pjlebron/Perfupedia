@@ -40,6 +40,18 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
 
   const supabase = getSupabaseBrowser();
 
+  // Campos válidos del schema — evita que campos extra de Supabase rompan Zod
+  const PERFUME_FIELDS = ["name","slug","brand_id","line","origin","country","gender","concentration",
+    "available_sizes","olfactive_family_id","status","aroma_summary","editorial_description",
+    "quick_opinion","pros","cons","verdict","editorial_score","price_range_ars","price_quality_ratio",
+    "availability_in_argentina","recommended_season","recommended_occasion","recommended_time_of_day",
+    "recommended_user_style","duration_score","projection_score","sillage_score","price_quality_score",
+    "meta_title","meta_description","notes_top","notes_heart","notes_base","main_image_path"];
+
+  const cleanDefaults = defaultValues
+    ? Object.fromEntries(Object.entries(defaultValues).filter(([k]) => PERFUME_FIELDS.includes(k)))
+    : {};
+
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<PerfumeFormValues>({
     resolver: zodResolver(perfumeSchema),
     defaultValues: {
@@ -51,7 +63,7 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
       projection_score: 3,
       sillage_score: 3,
       price_quality_score: 4,
-      ...defaultValues,
+      ...cleanDefaults,
     },
   });
 
