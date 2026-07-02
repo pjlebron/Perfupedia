@@ -3,6 +3,7 @@ export const revalidate = 3600; // Caché de 1 hora — se actualiza automática
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -61,7 +62,9 @@ async function getPerfumeData(slug: string) {
     perfume,
     notes: (notes.data as unknown as { position: string; note: { name: string; slug: string } }[]) ?? [],
     accords: (accords.data as unknown as { accord: { name: string; slug: string; color_hex: string | null } }[]) ?? [],
-    mainImage: (images.data?.[0]?.image as unknown as { storage_path: string; alt_text: string } | null) ?? null,
+    mainImage: perfume.main_image_path
+      ? { storage_path: "https://lbphepwhsyskustxmjue.supabase.co/storage/v1/object/public/perfumes/" + perfume.main_image_path, alt_text: perfume.name }
+      : (images.data?.[0]?.image as unknown as { storage_path: string; alt_text: string } | null) ?? null,
     scores,
     attributes: attributes.data ?? [],
     similars: (similars.data ?? []) as unknown as {
@@ -120,7 +123,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
               <div className="aspect-[3/4] rounded-2xl border border-[var(--color-line)] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center">
                 {mainImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={mainImage.storage_path} alt={mainImage.alt_text || perfume.name} className="w-full h-full object-cover" />
+                  <Image src={mainImage.storage_path} alt={mainImage.alt_text || perfume.name} fill className="object-cover" />
                 ) : (
                   <span className="text-xs text-[var(--color-ink)]/30">Imagen pendiente</span>
                 )}
