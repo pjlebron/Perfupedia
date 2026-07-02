@@ -75,25 +75,15 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
     setSaving(true);
     setError("");
 
-    const { duration_score, projection_score, sillage_score, price_quality_score, ...perfumeData } = values;
-
-    // Guardar/actualizar perfume
+    // Guardar todo en la tabla perfumes (scores incluidos)
     let perfId = perfumeId;
     if (isEdit) {
-      const { error: err } = await supabase.from("perfumes").update(perfumeData).eq("id", perfumeId);
+      const { error: err } = await supabase.from("perfumes").update(values).eq("id", perfumeId);
       if (err) { setError(err.message); setSaving(false); return; }
     } else {
-      const { data, error: err } = await supabase.from("perfumes").insert(perfumeData).select("id").single();
+      const { data, error: err } = await supabase.from("perfumes").insert(values).select("id").single();
       if (err) { setError(err.message); setSaving(false); return; }
       perfId = data.id;
-    }
-
-    // Guardar scores editoriales
-    if (perfId) {
-      await supabase.from("perfume_editorial_scores").upsert({
-        perfume_id: perfId,
-        duration_score, projection_score, sillage_score, price_quality_score,
-      }, { onConflict: "perfume_id" });
     }
 
     setSaving(false);

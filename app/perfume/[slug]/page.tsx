@@ -50,9 +50,7 @@ async function getPerfumeData(slug: string) {
   const totalVotes = voteSummary.data?.total_votes ?? 0;
   const useRealVotes = totalVotes >= VOTE_THRESHOLD;
 
-  // Scores editoriales — usamos data[0] porque quitamos .single() que fallaba
-  const editorialScoresData = editorialScores.data?.[0] ?? null;
-
+  // Scores: directo del perfume (columnas propias, sin query separada)
   const scores = useRealVotes
     ? {
         duration_score: Math.round((voteSummary.data?.avg_duration ?? 0) * 5) || null,
@@ -60,7 +58,12 @@ async function getPerfumeData(slug: string) {
         sillage_score: Math.round((voteSummary.data?.avg_sillage ?? 0) * 5) || null,
         price_quality_score: Math.round((voteSummary.data?.avg_price_quality ?? 0) * 5) || null,
       }
-    : editorialScoresData;
+    : {
+        duration_score: (perfume as Record<string,number>).duration_score ?? null,
+        projection_score: (perfume as Record<string,number>).projection_score ?? null,
+        sillage_score: (perfume as Record<string,number>).sillage_score ?? null,
+        price_quality_score: (perfume as Record<string,number>).price_quality_score ?? null,
+      };
 
   return {
     perfume,
