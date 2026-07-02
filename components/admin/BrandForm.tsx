@@ -61,7 +61,7 @@ export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
       ? await supabase.from("brands").update(values).eq("id", brandId)
       : await supabase.from("brands").insert(values);
     setSaving(false);
-    if (err) { setError(err.message); return; }
+    if (err) { setError("Error al guardar: " + err.message + " (code: " + err.code + ")"); setSaving(false); return; }
     router.push("/admin/marcas");
     router.refresh();
   };
