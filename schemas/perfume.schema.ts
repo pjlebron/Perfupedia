@@ -47,6 +47,11 @@ export const perfumeSchema = z.object({
   sillage_score: z.number().min(1).max(5).optional().nullable(),
   price_quality_score: z.number().min(1).max(5).optional().nullable(),
 
+  // Notas olfativas (texto libre separado por comas)
+  notes_top: optionalStr,
+  notes_heart: optionalStr,
+  notes_base: optionalStr,
+
   // SEO
   meta_title: optionalStr,
   meta_description: optionalStr,

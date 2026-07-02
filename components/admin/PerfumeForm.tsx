@@ -237,7 +237,23 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
         <ScoreSlider label="Precio / Calidad"   type="price_quality" value={pqScore}   onChange={(v) => setValue("price_quality_score", v)} />
       </FormSection>
 
-      {/* 4. PRECIO Y DISPONIBILIDAD */}
+      {/* 4. NOTAS OLFATIVAS */}
+      <FormSection title="4 · Pirámide olfativa" description="Escribí las notas separadas por coma. Ej: Vainilla, Oud, Canela">
+        <div className="flex flex-col gap-1.5">
+          <Label>Notas de salida <span className="text-gray-400 font-normal text-xs">(las primeras que se sienten)</span></Label>
+          <Input {...register("notes_top")} placeholder="ej: Bergamota, Limón, Pimienta" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>Notas de corazón <span className="text-gray-400 font-normal text-xs">(el alma del perfume)</span></Label>
+          <Input {...register("notes_heart")} placeholder="ej: Rosa, Jazmín, Canela" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>Notas de fondo <span className="text-gray-400 font-normal text-xs">(las que quedan en la piel)</span></Label>
+          <Input {...register("notes_base")} placeholder="ej: Vainilla, Oud, Almizcle" />
+        </div>
+      </FormSection>
+
+      {/* 5. PRECIO Y DISPONIBILIDAD */}
       <FormSection title="4 · Precio y disponibilidad">
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1.5">
@@ -255,8 +271,8 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
         </div>
       </FormSection>
 
-      {/* 5. RECOMENDACIONES */}
-      <FormSection title="5 · Recomendaciones de uso">
+      {/* 6. RECOMENDACIONES */}
+      <FormSection title="6 · Recomendaciones de uso">
         <CheckboxGroup
           label="Estación recomendada"
           options={["Primavera", "Verano", "Otoño", "Invierno"]}
@@ -284,8 +300,8 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
         </div>
       </FormSection>
 
-      {/* 6. SEO */}
-      <FormSection title="6 · SEO" description="Opcional. Si lo dejás vacío se genera automáticamente.">
+      {/* 7. SEO */}
+      <FormSection title="7 · SEO" description="Opcional. Si lo dejás vacío se genera automáticamente.">
         <SeoFields
           metaTitle={metaTitle}
           metaDescription={metaDesc}
@@ -294,8 +310,8 @@ export default function PerfumeForm({ defaultValues, perfumeId, brands, families
         />
       </FormSection>
 
-      {/* 7. ESTADO */}
-      <FormSection title="7 · Estado de publicación">
+      {/* 8. ESTADO */}
+      <FormSection title="8 · Estado de publicación">
         <StatusSelect value={statusVal} onChange={(v) => setValue("status", v as "draft" | "published" | "archived")} />
       </FormSection>
     </form>
