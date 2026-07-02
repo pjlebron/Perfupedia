@@ -100,8 +100,16 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
   const isArabe = perfume.origin === "arabe";
   const accent = isArabe ? "var(--color-arabe-green)" : "var(--color-celeste)";
 
+  // Usar campos de texto directos (recommended_season, recommended_occasion)
   const seasonAttrs = attributes.filter((a) => ["primavera","verano","otono","invierno"].includes(a.attribute));
   const occasionAttrs = attributes.filter((a) => ["diario","oficina","noche","cita","formal","casual","regalo"].includes(a.attribute));
+  // Notas desde campos de texto nuevos
+  const notesFromText = [
+    ...((perfume as Record<string,string>).notes_top ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "salida", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
+    ...((perfume as Record<string,string>).notes_heart ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "corazon", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
+    ...((perfume as Record<string,string>).notes_base ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "fondo", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
+  ];
+  const allNotes = notes.length > 0 ? notes : notesFromText;
 
   return (
     <>
@@ -120,7 +128,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           <div className="mt-8 grid sm:grid-cols-[260px_1fr] gap-8 sm:gap-10 items-start">
             {/* Columna imagen */}
             <div className="sm:sticky sm:top-24">
-              <div className="aspect-[3/4] rounded-2xl border border-[var(--color-line)] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center">
+              <div className="relative aspect-[3/4] rounded-2xl border border-[var(--color-line)] bg-gradient-to-br from-[#f1ead9] to-[#e7dac0] overflow-hidden flex items-center justify-center">
                 {mainImage ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <Image src={mainImage.storage_path} alt={mainImage.alt_text || perfume.name} fill className="object-cover" />
@@ -190,10 +198,32 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           <PerfumePerformanceBars scores={scores} isEditorial={isEditorial} />
 
           {/* ESTACIONES */}
-          <PerfumeSeasonBars attributes={seasonAttrs} />
+          {seasonAttrs.length > 0 ? (
+            <PerfumeSeasonBars attributes={seasonAttrs} />
+          ) : (perfume as Record<string,string>).recommended_season ? (
+            <section className="mt-10">
+              <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Estaciones recomendadas</h2>
+              <div className="flex flex-wrap gap-2">
+                {((perfume as Record<string,string>).recommended_season ?? "").split(",").filter(Boolean).map((s: string) => (
+                  <span key={s} className="border border-[var(--color-line)] rounded-full px-3 py-1 text-sm capitalize text-[var(--color-ink)]/70">{s.trim()}</span>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {/* OCASIONES */}
-          <PerfumeOccasionBars attributes={occasionAttrs} />
+          {occasionAttrs.length > 0 ? (
+            <PerfumeOccasionBars attributes={occasionAttrs} />
+          ) : (perfume as Record<string,string>).recommended_occasion ? (
+            <section className="mt-10">
+              <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Ocasiones de uso</h2>
+              <div className="flex flex-wrap gap-2">
+                {((perfume as Record<string,string>).recommended_occasion ?? "").split(",").filter(Boolean).map((s: string) => (
+                  <span key={s} className="border border-[var(--color-line)] rounded-full px-3 py-1 text-sm capitalize text-[var(--color-ink)]/70">{s.trim()}</span>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <BannerSlot label="después del rendimiento" />
 
@@ -209,7 +239,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           )}
 
           {/* PIRÁMIDE */}
-          <PerfumeNotesPyramid notes={notes} />
+          <PerfumeNotesPyramid notes={allNotes} />
 
           {/* PROS/CONTRAS */}
           <PerfumeProsCons pros={perfume.pros} cons={perfume.cons} />
