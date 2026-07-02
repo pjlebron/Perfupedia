@@ -33,7 +33,7 @@ interface BrandFormProps {
 export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [localImage, setLocalImage] = useState<string|null>((defaultValues as Record<string,string>)?.main_image_path ?? null);
+
   const [error, setError] = useState("");
   const isEdit = !!brandId;
 
@@ -127,8 +127,8 @@ export default function BrandForm({ defaultValues, brandId }: BrandFormProps) {
         <ImageUploader
           label="Logo / Imagen"
           bucket="marcas"
-          value={localImage}
-          onChange={(path) => { setLocalImage(path); setValue("main_image_path" as never, path as never); }}
+          value={watch("main_image_path") ?? null}
+          onChange={(path) => setValue("main_image_path", path)}
           hint="(recomendado: fondo blanco, cuadrada)"
         />
       </FormSection>
