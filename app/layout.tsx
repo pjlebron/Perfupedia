@@ -1,7 +1,8 @@
-export const revalidate = 3600; // Caché de 1 hora — se actualiza automáticamente
+export const revalidate = 3600;
 
 import type { Metadata } from "next";
 import "./globals.css";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "Perfupedia | La guía argentina de perfumes",
@@ -19,6 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="h-full antialiased">
+      <GoogleTagManager gtmId="G-30695V86P1" />
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );
