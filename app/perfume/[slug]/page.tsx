@@ -10,6 +10,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import BannerSlot from "@/components/BannerSlot";
 import PerfumeAccords from "@/components/PerfumeAccords";
 import PerfumePerformanceBars from "@/components/PerfumePerformanceBars";
+import PerfumeRendimiento from "@/components/PerfumeRendimiento";
 import PerfumeSeasonBars from "@/components/PerfumeSeasonBars";
 import { SeasonDistribution, TimeDistribution } from "@/components/PerfumeVoteDistribution";
 import PerfumeOccasionBars from "@/components/PerfumeOccasionBars";
@@ -201,27 +202,8 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
 
           <BannerSlot label="después del hero" />
 
-          {/* RENDIMIENTO */}
-          {(scores?.duration_score || scores?.projection_score || scores?.sillage_score || scores?.price_quality_score) && (
-            <section className="mt-10">
-              <h2 className="font-display text-xl mb-2 flex items-center gap-3 after:content-[\'\'] after:flex-1 after:h-px after:bg-[var(--color-line)]">Rendimiento</h2>
-              {isEditorial && <p className="text-xs text-[var(--color-ink)]/40 mb-5">Puntuación editorial · Se actualizará con votos reales.</p>}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { label: "Duración",         value: scores?.duration_score,      opts: ["","Muy corta","Corta","Moderada","Larga","Excepcional"] },
-                  { label: "Proyección",        value: scores?.projection_score,    opts: ["","Íntima","Discreta","Moderada","Fuerte","Bestial"] },
-                  { label: "Estela",            value: scores?.sillage_score,       opts: ["","Discreta","Suave","Moderada","Fuerte","Legendaria"] },
-                  { label: "Precio / Calidad",  value: scores?.price_quality_score, opts: ["","Pobre","Aceptable","Buena","Muy buena","Excelente"] },
-                ].map(({ label, value, opts }) => value ? (
-                  <div key={label} className="border border-[var(--color-line)] rounded-xl p-4 text-center">
-                    <div className="text-3xl font-display font-bold text-[var(--color-amber)]">{value}<span className="text-base text-[var(--color-ink)]/30">/5</span></div>
-                    <div className="text-xs font-medium mt-1 text-[var(--color-ink)]/70">{opts[value]}</div>
-                    <div className="text-[10px] uppercase tracking-wide text-[var(--color-ink)]/40 mt-1">{label}</div>
-                  </div>
-                ) : null)}
-              </div>
-            </section>
-          )}
+          {/* RENDIMIENTO - client-side para evitar caché */}
+          <PerfumeRendimiento perfumeSlug={perfume.slug} />
 
           {/* ESTACIONES */}
           {seasonAttrs.length > 0 ? (
