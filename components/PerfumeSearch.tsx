@@ -32,14 +32,47 @@ export default function PerfumeSearch() {
   const search = useCallback(async (q: string) => {
     if (q.trim().length < 2) { setResults([]); return; }
     setLoading(true);
-    const { data } = await supabase
+
+    // Buscar por nombre de perfume
+    const { data: byName } = await supabase
       .from("perfumes")
       .select("name, slug, gender, concentration, main_image_path, brand:brands(name, slug)")
-      .or(`name.ilike.%${q}%,brand.name.ilike.%${q}%`)
+      .ilike("name", `%${q}%`)
       .eq("status", "published")
       .order("name")
       .limit(8);
-    setResults((data as never) ?? []);
+
+    // Buscar marcas que coincidan con la búsqueda
+    const { data: brands } = await supabase
+      .from("brands")
+      .select("id")
+      .ilike("name", `%${q}%`)
+      .limit(5);
+
+    // Si hay marcas que coinciden, buscar sus perfumes
+    let byBrand: Result[] = [];
+    if (brands && brands.length > 0) {
+      const brandIds = brands.map((b: { id: string }) => b.id);
+      const { data: brandPerf } = await supabase
+        .from("perfumes")
+        .select("name, slug, gender, concentration, main_image_path, brand:brands(name, slug)")
+        .in("brand_id", brandIds)
+        .eq("status", "published")
+        .order("name")
+        .limit(8);
+      byBrand = (brandPerf as never) ?? [];
+    }
+
+    // Combinar y deduplicar por slug
+    const all = [...(byName ?? []), ...byBrand] as Result[];
+    const seen = new Set<string>();
+    const deduped = all.filter(r => {
+      if (seen.has(r.slug)) return false;
+      seen.add(r.slug);
+      return true;
+    }).slice(0, 8);
+
+    setResults(deduped);
     setLoading(false);
   }, []);
 
