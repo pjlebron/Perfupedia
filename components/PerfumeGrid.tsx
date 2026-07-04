@@ -42,8 +42,11 @@ export default async function PerfumeGrid({ searchParams, lockedOrigin }: Props)
   if (genero)  query = query.eq("gender", genero);
   if (conc)    query = query.eq("concentration", conc);
 
-  if (orden === "puntuacion")  query = query.order("editorial_score", { ascending: false });
-  else                         query = query.order("created_at", { ascending: false });
+  if (orden === "puntuacion") {
+    query = query.order("editorial_score", { ascending: false }).order("name", { ascending: true });
+  } else {
+    query = query.order("created_at", { ascending: false }).order("name", { ascending: true });
+  }
 
   query = query.range(from, to);
 
