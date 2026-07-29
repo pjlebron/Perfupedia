@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FlaskConical, Tag, FileText, Trophy, Loader2 } from "lucide-react";
+import { FlaskConical, Tag, FileText, Trophy, Users, Loader2 } from "lucide-react";
 
 const SECTIONS = [
   { key: "perfumes",  label: "Perfumes",  icon: FlaskConical, href: "/admin/perfumes"  },
@@ -17,6 +17,7 @@ type Stats = Record<string, { total: number; published: number }>;
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [userStats, setUserStats] = useState<{ total: number; admins: number } | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -37,6 +38,20 @@ export default function AdminDashboard() {
       });
     };
     load();
+
+    const loadUsers = async () => {
+      const sb = getSupabaseBrowser();
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+      const res = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (!res.ok) return;
+      const body = await res.json();
+      const users = (body.users ?? []) as { role: string }[];
+      setUserStats({ total: users.length, admins: users.filter((u) => u.role === "admin").length });
+    };
+    loadUsers();
   }, []);
 
   return (
@@ -52,7 +67,7 @@ export default function AdminDashboard() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             {SECTIONS.map(({ key, label, icon: Icon, href }) => {
               const s = stats[key];
               return (
@@ -73,6 +88,27 @@ export default function AdminDashboard() {
                 </Card>
               );
             })}
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-gray-500">Usuarios</CardTitle>
+                  <Users className="w-4 h-4 text-gray-400" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                {userStats ? (
+                  <>
+                    <div className="text-2xl font-bold text-gray-900">{userStats.total}</div>
+                    <p className="text-xs text-gray-500 mt-1">{userStats.admins} administrador{userStats.admins === 1 ? "" : "es"}</p>
+                  </>
+                ) : (
+                  <div className="text-2xl font-bold text-gray-300">—</div>
+                )}
+                <Link href="/admin/usuarios">
+                  <Button variant="ghost" size="sm" className="mt-3 w-full text-xs">Ver todos →</Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
           <h2 className="font-medium text-gray-700 mb-3">Acciones rápidas</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

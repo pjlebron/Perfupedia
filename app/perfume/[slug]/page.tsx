@@ -17,6 +17,7 @@ import PerfumeVerdict from "@/components/PerfumeVerdict";
 import PerfumeProsCons from "@/components/PerfumeProsCons";
 import PerfumeSimilarList from "@/components/PerfumeSimilarList";
 import CommunityVotes from "@/components/CommunityVotes";
+import Reviews from "@/components/Reviews";
 import PerfumeFAQ from "@/components/PerfumeFAQ";
 import { supabase } from "@/lib/supabase";
 
@@ -303,6 +304,9 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
 
           {/* VOTOS DE LA COMUNIDAD */}
           <CommunityVotes perfumeId={perfume.id} initialTotalVotes={totalVotes} />
+
+          {/* RESEÑAS */}
+          <Reviews perfumeId={perfume.id} />
 
           {/* FAQ */}
           <PerfumeFAQ faqs={faqs} />
