@@ -153,9 +153,6 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
                 )}
               </div>
               <div className="mt-4 flex flex-col gap-2">
-                <a href="#comprar" className="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-white" style={{ background: accent }}>
-                  🛒 Ver dónde comprar
-                </a>
                 <button className="flex items-center justify-center gap-2 rounded-xl border border-[var(--color-line)] px-4 py-2.5 text-sm hover:border-[var(--color-amber)] transition-colors">
                   ⚖️ Comparar
                 </button>
