@@ -8,7 +8,7 @@ import Image from "next/image";
 
 interface ImageUploaderProps {
   label: string;
-  bucket: "perfumes" | "marcas";
+  bucket: "perfumes" | "marcas" | "banners";
   value?: string | null; // path actual guardado
   onChange: (path: string | null) => void;
   hint?: string;

@@ -38,7 +38,7 @@ export default async function PerfumesPage({
             </p>
           </div>
 
-          <BannerSlot label="listado-top" />
+          <BannerSlot location="listing_top" />
 
           <div className="flex flex-col sm:flex-row gap-8 mt-6">
             {/* Sidebar filtros */}

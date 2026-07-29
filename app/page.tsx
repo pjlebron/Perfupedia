@@ -105,7 +105,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <BannerSlot label="home-mid" />
+        <BannerSlot location="home_mid" />
 
         {/* PERFUMES RECIENTES */}
         <section className="mx-auto max-w-5xl px-5 sm:px-8 py-10">
@@ -151,7 +151,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <BannerSlot label="home-bottom" />
+        <BannerSlot location="home_bottom" />
 
         {/* ARTÍCULOS */}
         {articles.length > 0 && (

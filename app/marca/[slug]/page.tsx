@@ -164,7 +164,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
             </div>
           </section>
 
-          <BannerSlot label="brand-top" />
+          <BannerSlot location="brand_top" />
 
           {/* TOP 3 */}
           {top3.length > 0 && (
@@ -213,7 +213,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
             </section>
           )}
 
-          <BannerSlot label="brand-bottom" />
+          <BannerSlot location="brand_bottom" />
 
           <p className="mt-8 text-xs text-[var(--color-ink)]/40 border-t border-[var(--color-line)] pt-6">
             {brand.name} es marca registrada de su respectivo titular. Este sitio no tiene relación comercial con la marca. Las fichas y reseñas son contenido editorial independiente.

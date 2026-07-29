@@ -87,7 +87,7 @@ export default async function GuiasPage({
             })}
           </div>
 
-          <BannerSlot label="blog-top" />
+          <BannerSlot location="blog_list_top" />
 
           {articles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -102,7 +102,7 @@ export default async function GuiasPage({
             </div>
           )}
 
-          <BannerSlot label="blog-bottom" />
+          <BannerSlot location="blog_list_bottom" />
         </div>
       </main>
       <Footer />

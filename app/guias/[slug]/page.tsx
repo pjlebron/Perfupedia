@@ -202,7 +202,7 @@ export default async function ArticlePage({
             </nav>
           )}
 
-          <BannerSlot label="article-top" />
+          <BannerSlot location="in_article_top" />
 
           {/* CONTENIDO */}
           <article
@@ -212,7 +212,7 @@ export default async function ArticlePage({
             }}
           />
 
-          <BannerSlot label="article-mid" />
+          <BannerSlot location="in_article_bottom" />
 
           {/* PERFUMES RELACIONADOS */}
           {relatedPerfumes.length > 0 && (
@@ -231,7 +231,7 @@ export default async function ArticlePage({
           {/* FAQs */}
           {faqs.length > 0 && <PerfumeFAQ faqs={faqs} />}
 
-          <BannerSlot label="article-end" />
+          <BannerSlot location="article_end" />
 
           {/* FOOTER DEL ARTÍCULO */}
           <div className="mt-10 pt-6 border-t border-[var(--color-line)] flex flex-wrap gap-4 justify-between items-center">

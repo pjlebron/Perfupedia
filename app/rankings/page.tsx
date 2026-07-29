@@ -53,7 +53,7 @@ export default async function RankingsPage() {
             </p>
           </div>
 
-          <BannerSlot label="rankings-top" />
+          <BannerSlot location="rankings_list_top" />
 
           {rankings.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
@@ -93,7 +93,7 @@ export default async function RankingsPage() {
             </div>
           )}
 
-          <BannerSlot label="rankings-bottom" />
+          <BannerSlot location="rankings_list_bottom" />
         </div>
       </main>
       <Footer />

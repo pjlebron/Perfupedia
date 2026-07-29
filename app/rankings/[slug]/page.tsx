@@ -85,7 +85,7 @@ export default async function RankingPage({ params }: { params: Promise<{ slug: 
             </p>
           )}
 
-          <BannerSlot label="ranking-top" />
+          <BannerSlot location="ranking_detail_top" />
 
           {items.length > 0 ? (
             <div className="mt-8 flex flex-col gap-6">
@@ -118,7 +118,7 @@ export default async function RankingPage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          <BannerSlot label="ranking-bottom" />
+          <BannerSlot location="ranking_detail_bottom" />
         </div>
       </main>
       <Footer />

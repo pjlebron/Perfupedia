@@ -40,7 +40,7 @@ export default async function Page({
             </p>
           </div>
 
-          <BannerSlot label="categoria-top" />
+          <BannerSlot location="listing_top" />
 
           <div className="flex flex-col sm:flex-row gap-8 mt-6">
             <div className="w-full sm:w-52 flex-shrink-0">

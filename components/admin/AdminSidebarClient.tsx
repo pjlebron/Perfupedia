@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, FlaskConical, Tag, FileText, Trophy, ChevronRight } from "lucide-react";
+import { LayoutDashboard, FlaskConical, Tag, FileText, Trophy, Megaphone, ChevronRight } from "lucide-react";
 
 const NAV = [
   { href: "/admin",           label: "Dashboard",  icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin/marcas",    label: "Marcas",     icon: Tag },
   { href: "/admin/articulos", label: "Artículos",  icon: FileText },
   { href: "/admin/rankings",  label: "Rankings",   icon: Trophy },
+  { href: "/admin/banners",   label: "Banners",    icon: Megaphone },
 ];
 
 export default function AdminSidebarClient() {

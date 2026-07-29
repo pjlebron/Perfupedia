@@ -200,7 +200,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
             </div>
           </div>
 
-          <BannerSlot label="después del hero" />
+          <BannerSlot location="perfume_top" />
 
           {/* RENDIMIENTO - client-side para evitar caché */}
           <PerfumeRendimiento perfumeSlug={perfume.slug} />
@@ -272,7 +272,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
             </section>
           ) : null}
 
-          <BannerSlot label="después del rendimiento" />
+          <BannerSlot location="perfume_mid" />
 
           {/* VEREDICTO */}
           <PerfumeVerdict perfume={perfume} accent={accent} />
@@ -294,7 +294,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           {/* SIMILARES */}
           <PerfumeSimilarList similars={similars} />
 
-          <BannerSlot label="antes de reviews" />
+          <BannerSlot location="perfume_bottom" />
 
           {/* REVIEWS */}
           <ReviewPlaceholder />
