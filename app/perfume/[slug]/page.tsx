@@ -20,6 +20,7 @@ import CommunityVotes from "@/components/CommunityVotes";
 import Reviews from "@/components/Reviews";
 import PerfumeFAQ from "@/components/PerfumeFAQ";
 import { supabase } from "@/lib/supabase";
+import { splitNotes, toSlug } from "@/lib/utils";
 
 const VOTE_THRESHOLD = 20;
 
@@ -122,9 +123,9 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
 
   // Notas desde campos de texto nuevos
   const notesFromText = [
-    ...((perfume as Record<string,string>).notes_top ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "salida", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
-    ...((perfume as Record<string,string>).notes_heart ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "corazon", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
-    ...((perfume as Record<string,string>).notes_base ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "fondo", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
+    ...splitNotes((perfume as Record<string, string>).notes_top).map((n) => ({ position: "salida", note: { name: n, slug: toSlug(n) } })),
+    ...splitNotes((perfume as Record<string, string>).notes_heart).map((n) => ({ position: "corazon", note: { name: n, slug: toSlug(n) } })),
+    ...splitNotes((perfume as Record<string, string>).notes_base).map((n) => ({ position: "fondo", note: { name: n, slug: toSlug(n) } })),
   ];
   const allNotes = notes.length > 0 ? notes : notesFromText;
 
