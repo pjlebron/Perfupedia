@@ -7,15 +7,27 @@ const SEASONS = [
   { key: "invierno",  label: "Invierno",  icon: "❄️", color: "#4E7C8C" },
 ];
 
-export default function PerfumeSeasonBars({ attributes }: { attributes: Attribute[] }) {
+export default function PerfumeSeasonBars({
+  attributes,
+  isEditorial = true,
+}: {
+  attributes: Attribute[];
+  isEditorial?: boolean;
+}) {
   if (!attributes || attributes.length === 0) return null;
   const map = Object.fromEntries(attributes.map((a) => [a.attribute, a.value]));
 
   return (
     <section className="mt-10">
-      <h2 className="font-display text-xl mb-5 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">
-        Estaciones recomendadas
-      </h2>
+      <div className="flex items-center gap-3 mb-5">
+        <h2 className="font-display text-xl flex-shrink-0">Estaciones recomendadas</h2>
+        {isEditorial ? (
+          <span className="text-[10px] bg-[var(--color-ink)]/8 text-[var(--color-ink)]/50 rounded px-2 py-0.5">Editorial</span>
+        ) : (
+          <span className="text-[10px] bg-[var(--color-amber)]/15 text-[var(--color-amber)] rounded px-2 py-0.5">Votos de la comunidad</span>
+        )}
+        <span className="flex-1 h-px bg-[var(--color-line)]" />
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {SEASONS.map(({ key, label, icon, color }) => {
           const val = map[key] ?? 0;

@@ -10,15 +10,13 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import BannerSlot from "@/components/BannerSlot";
 import PerfumeAccords from "@/components/PerfumeAccords";
 import PerfumePerformanceBars from "@/components/PerfumePerformanceBars";
-import PerfumeRendimiento from "@/components/PerfumeRendimiento";
 import PerfumeSeasonBars from "@/components/PerfumeSeasonBars";
-import { SeasonDistribution, TimeDistribution } from "@/components/PerfumeVoteDistribution";
 import PerfumeOccasionBars from "@/components/PerfumeOccasionBars";
 import PerfumeNotesPyramid from "@/components/PerfumeNotesPyramid";
 import PerfumeVerdict from "@/components/PerfumeVerdict";
 import PerfumeProsCons from "@/components/PerfumeProsCons";
 import PerfumeSimilarList from "@/components/PerfumeSimilarList";
-import ReviewPlaceholder from "@/components/ReviewPlaceholder";
+import CommunityVotes from "@/components/CommunityVotes";
 import PerfumeFAQ from "@/components/PerfumeFAQ";
 import { supabase } from "@/lib/supabase";
 
@@ -66,6 +64,18 @@ async function getPerfumeData(slug: string) {
         price_quality_score: (perfume as Record<string,number>).price_quality_score ?? null,
       };
 
+  const editorialAttrs = attributes.data ?? [];
+  const seasonKeys = ["primavera","verano","otono","invierno"];
+  const occasionKeys = ["diario","oficina","noche","cita","formal","casual","regalo"];
+  const summary = voteSummary.data as Record<string, number> | null;
+
+  const seasonAttrs = useRealVotes && summary
+    ? seasonKeys.map((key) => ({ attribute: key, value: summary[`attr_${key}`] ?? 0 }))
+    : editorialAttrs.filter((a) => seasonKeys.includes(a.attribute));
+  const occasionAttrs = useRealVotes && summary
+    ? occasionKeys.map((key) => ({ attribute: key, value: summary[`attr_${key}`] ?? 0 }))
+    : editorialAttrs.filter((a) => occasionKeys.includes(a.attribute));
+
   return {
     perfume,
     notes: (notes.data as unknown as { position: string; note: { name: string; slug: string } }[]) ?? [],
@@ -74,7 +84,8 @@ async function getPerfumeData(slug: string) {
       ? { storage_path: "https://lbphepwhsyskustxmjue.supabase.co/storage/v1/object/public/perfumes/" + perfume.main_image_path, alt_text: perfume.name }
       : (images.data?.[0]?.image as unknown as { storage_path: string; alt_text: string } | null) ?? null,
     scores,
-    attributes: attributes.data ?? [],
+    seasonAttrs,
+    occasionAttrs,
     similars: (similars.data ?? []) as unknown as {
       note: string | null;
       similar_perfume: { name: string; slug: string; brand: { name: string } | null; olfactive_family: { name: string } | null };
@@ -104,13 +115,10 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
   const data = await getPerfumeData(slug);
   if (!data) notFound();
 
-  const { perfume, notes, accords, mainImage, scores, attributes, similars, faqs, isEditorial } = data;
+  const { perfume, notes, accords, mainImage, scores, seasonAttrs, occasionAttrs, similars, faqs, isEditorial, totalVotes } = data;
   const isArabe = perfume.origin === "arabe";
   const accent = isArabe ? "var(--color-arabe-green)" : "var(--color-celeste)";
 
-  // Usar campos de texto directos (recommended_season, recommended_occasion)
-  const seasonAttrs = attributes.filter((a) => ["primavera","verano","otono","invierno"].includes(a.attribute));
-  const occasionAttrs = attributes.filter((a) => ["diario","oficina","noche","cita","formal","casual","regalo"].includes(a.attribute));
   // Notas desde campos de texto nuevos
   const notesFromText = [
     ...((perfume as Record<string,string>).notes_top ?? "").split(",").filter(Boolean).map((n: string) => ({ position: "salida", note: { name: n.trim(), slug: n.trim().toLowerCase().replace(/\s+/g, "-") } })),
@@ -202,12 +210,12 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
 
           <BannerSlot location="perfume_top" />
 
-          {/* RENDIMIENTO - client-side para evitar caché */}
-          <PerfumeRendimiento perfumeSlug={perfume.slug} />
+          {/* RENDIMIENTO */}
+          <PerfumePerformanceBars scores={scores} isEditorial={isEditorial} />
 
           {/* ESTACIONES */}
           {seasonAttrs.length > 0 ? (
-            <PerfumeSeasonBars attributes={seasonAttrs} />
+            <PerfumeSeasonBars attributes={seasonAttrs} isEditorial={isEditorial} />
           ) : (perfume as Record<string,string>).recommended_season ? (
             <section className="mt-10">
               <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Estaciones recomendadas</h2>
@@ -249,7 +257,7 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
           ) : null}
 
           {occasionAttrs.length > 0 ? (
-            <PerfumeOccasionBars attributes={occasionAttrs} />
+            <PerfumeOccasionBars attributes={occasionAttrs} isEditorial={isEditorial} />
           ) : (perfume as Record<string,string>).recommended_occasion ? (
             <section className="mt-10">
               <h2 className="font-display text-xl mb-4 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">Ocasiones de uso</h2>
@@ -296,8 +304,8 @@ export default async function PerfumePage({ params }: { params: Promise<{ slug: 
 
           <BannerSlot location="perfume_bottom" />
 
-          {/* REVIEWS */}
-          <ReviewPlaceholder />
+          {/* VOTOS DE LA COMUNIDAD */}
+          <CommunityVotes perfumeId={perfume.id} initialTotalVotes={totalVotes} />
 
           {/* FAQ */}
           <PerfumeFAQ faqs={faqs} />

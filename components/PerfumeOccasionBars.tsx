@@ -10,7 +10,13 @@ const OCCASIONS = [
   { key: "oficina", label: "Oficina" },
 ];
 
-export default function PerfumeOccasionBars({ attributes }: { attributes: Attribute[] }) {
+export default function PerfumeOccasionBars({
+  attributes,
+  isEditorial = true,
+}: {
+  attributes: Attribute[];
+  isEditorial?: boolean;
+}) {
   if (!attributes || attributes.length === 0) return null;
   const map = Object.fromEntries(attributes.map((a) => [a.attribute, a.value]));
 
@@ -20,9 +26,15 @@ export default function PerfumeOccasionBars({ attributes }: { attributes: Attrib
 
   return (
     <section className="mt-10">
-      <h2 className="font-display text-xl mb-5 flex items-center gap-3 after:content-[''] after:flex-1 after:h-px after:bg-[var(--color-line)]">
-        Ocasiones de uso
-      </h2>
+      <div className="flex items-center gap-3 mb-5">
+        <h2 className="font-display text-xl flex-shrink-0">Ocasiones de uso</h2>
+        {isEditorial ? (
+          <span className="text-[10px] bg-[var(--color-ink)]/8 text-[var(--color-ink)]/50 rounded px-2 py-0.5">Editorial</span>
+        ) : (
+          <span className="text-[10px] bg-[var(--color-amber)]/15 text-[var(--color-amber)] rounded px-2 py-0.5">Votos de la comunidad</span>
+        )}
+        <span className="flex-1 h-px bg-[var(--color-line)]" />
+      </div>
       <div className="flex flex-col gap-3">
         {sorted.map(({ key, label, val }) => (
           <div key={key} className="grid items-center gap-3" style={{ gridTemplateColumns: "130px 1fr 36px" }}>
